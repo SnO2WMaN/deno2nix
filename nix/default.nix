@@ -36,16 +36,16 @@ in rec {
     src,
     entrypoint,
     lockfile,
-    importmap ? null,
+    importMap ? null,
     denoFlags ? [],
   }:
     stdenv.mkDerivation {
-      inherit name version entrypoint importmap;
+      inherit name version entrypoint;
       denoFlags =
         denoFlags
         ++ (
-          if importmap != null
-          then ["--import-map" importmap]
+          if importMap != null
+          then ["--import-map" importMap]
           else []
         );
 
@@ -86,7 +86,7 @@ in rec {
     src,
     entrypoint,
     lockfile,
-    importmap ? null,
+    importMap ? null,
     denoFlags ? [],
   }:
     stdenv.mkDerivation {
@@ -97,8 +97,8 @@ in rec {
         ++ ["--cached-only"]
         ++ ["--output" name]
         ++ (
-          if importmap != null
-          then ["--import-map" importmap]
+          if importMap != null
+          then ["--import-map" importMap]
           else []
         );
 

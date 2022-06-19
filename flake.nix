@@ -16,8 +16,11 @@
     devshell,
     ...
   } @ inputs:
-    flake-utils.lib.eachSystem
-    [
+    rec {
+      overlays.default = import ./overlay.nix;
+      overlay = overlays.default;
+    }
+    // flake-utils.lib.eachSystem [
       "x86_64-linux"
     ]
     (
@@ -35,7 +38,7 @@
           version = "0.1.0";
           src = self;
           lockfile = ./lock.json;
-          importmap = ./import_map.json;
+          importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
         packages.wrapper = pkgs.deno2nix.mkBundledWrapper {
@@ -43,7 +46,7 @@
           version = "0.1.0";
           src = self;
           lockfile = ./lock.json;
-          importmap = ./import_map.json;
+          importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
         packages.executable = pkgs.deno2nix.mkExecutable {
@@ -51,7 +54,7 @@
           version = "0.1.0";
           src = self;
           lockfile = ./lock.json;
-          importmap = ./import_map.json;
+          importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
         packages.default = packages.executable;
