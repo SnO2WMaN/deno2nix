@@ -1,0 +1,59 @@
+{
+  "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix",
+
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.importMap": "./import_map.json",
+  "deno.config": "./deno.jsonc",
+
+  "json.schemas": [
+    {
+      "fileMatch": ["deno.jsonc"],
+      "url": "https://deno.land/x/deno/cli/schemas/config-file.v1.json"
+    }
+  ],
+
+  "customLocalFormatters.formatters": [
+    {
+      "command": "treefmt -q --stdin ${file}",
+      "languages": [
+        "json",
+        "jsonc",
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "md",
+        "nix",
+        "toml"
+      ]
+    }
+  ],
+  "[toml]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[md]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "run": "deno run ./mod.ts"
+  },
+  "fmt": {
+    "options": {
+      "lineWidth": 120,
+      "indentWidth": 2,
+      "singleQuote": false,
+      "useTabs": false
+    },
+    "files": {
+      "exclude": [
+        "./lock.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+[formatter.alejandra]
+command = "alejandra"
+includes = ["*.nix"]
+
+[formatter.deno-fmt]
+command = "deno"
+options = ["fmt"]
+includes = ["*.json", "*.jsonc", "*.md", "*.js", "*.jsx", "*.ts", "*.tsx"]
+
+[formatter.taplo]
+command = "taplo"
+options = ["format"]
+includes = ["*.toml"]
