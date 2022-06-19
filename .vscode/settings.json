@@ -23,7 +23,7 @@
         "javascriptreact",
         "typescript",
         "typescriptreact",
-        "md",
+        "markdown",
         "nix",
         "toml"
       ]
@@ -35,7 +35,7 @@
   "[nix]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters"
   },
-  "[md]": {
+  "[markdown]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters"
   },
   "[json]": {
