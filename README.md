@@ -18,7 +18,7 @@ deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts
 
 ```nix
 {
-  inputs.deno2nix.url = "https://github.com/SnO2WMaN/deno2nix";
+  inputs.deno2nix.url = "github:SnO2WMaN/deno2nix";
   inputs.devshell.url = "github:numtide/devshell";
 
   outputs = {
