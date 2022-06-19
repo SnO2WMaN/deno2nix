@@ -29,11 +29,14 @@
           inherit system;
           overlays = [
             devshell.overlay
-            (import ./overlay.nix)
           ];
         };
       in rec {
-        packages.bundled = pkgs.deno2nix.mkBundled {
+        lib = {
+          inherit (import ./nix {inherit pkgs;}) mkDepsLink mkBundledWrapper mkExecutable;
+        };
+
+        packages.bundled = lib.mkBundled {
           name = "example";
           version = "0.1.0";
           src = self;
@@ -41,7 +44,7 @@
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.wrapper = pkgs.deno2nix.mkBundledWrapper {
+        packages.wrapper = lib.mkBundledWrapper {
           name = "example";
           version = "0.1.0";
           src = self;
@@ -49,7 +52,7 @@
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.executable = pkgs.deno2nix.mkExecutable {
+        packages.executable = lib.mkExecutable {
           name = "example";
           version = "0.1.0";
           src = self;
