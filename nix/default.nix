@@ -90,22 +90,17 @@ in rec {
     denoFlags ? [],
   }:
     stdenv.mkDerivation {
-      inherit name entrypoint;
+      inherit src name entrypoint;
       denoFlags =
         denoFlags
-        ++ ["--lock" lockfile]
+        ++ ["--lock" "${src}/${lockfile}"]
         ++ ["--cached-only"]
         ++ ["--output" name]
         ++ (
           if importMap != null
-          then ["--import-map" importMap]
+          then ["--import-map" "${src}/${importMap}"]
           else []
         );
-
-      src = cleanSourceWith {
-        inherit src;
-        filter = path: type: (baseNameOf path != name);
-      };
       buildInputs = with pkgs; [
         deno
         jq
@@ -114,7 +109,8 @@ in rec {
 
       buildPhase = ''
         export DENO_DIR=`mktemp -d`
-        ln -s "${mkDepsLink lockfile}" $(deno info --json | jq -r .modulesCache)
+        ln -s "${mkDepsLink "${src}/${lockfile}"}" $(deno info --json | jq -r .modulesCache)
+        ls $(dirname $src/$entrypoint)
 
         deno compile $denoFlags "$entrypoint"
       '';
