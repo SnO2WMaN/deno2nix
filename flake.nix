@@ -60,9 +60,8 @@
         packages.default = self.packages.${system}.executable;
         defaultPackage = self.packages.${system}.default;
 
-        apps.default = {
-          type = "app";
-          program = "${self.packages.${system}.executable}/bin/example";
+        apps.default = flake-utils.lib.mkApp {
+          drv = self.packages.${system}.executable;
         };
 
         checks = self.packages.${system};
