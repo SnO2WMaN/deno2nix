@@ -1,5 +1,7 @@
 final: prev: {
   deno2nix = {
-    inherit (import ./nix {pkgs = prev;}) mkBundled mkBundledWrapper mkExecutable;
+    mkBundled = final.callPackage ./nix/make-bundled.nix {};
+    mkBundledWrapper = final.callPackage ./nix/make-bundled-wrapper.nix {};
+    mkExecutable = final.callPackage ./nix/make-executable.nix {};
   };
 }
