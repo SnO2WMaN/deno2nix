@@ -16,9 +16,9 @@
     devshell,
     ...
   } @ inputs:
-    rec {
+    {
       overlays.default = import ./overlay.nix;
-      overlay = overlays.default;
+      overlay = self.overlays.default;
     }
     // flake-utils.lib.eachSystem [
       "x86_64-linux"
@@ -29,10 +29,10 @@
           inherit system;
           overlays = [
             devshell.overlay
-            (import ./overlay.nix)
+            self.overlays.default
           ];
         };
-      in rec {
+      in {
         packages.bundled = pkgs.deno2nix.mkBundled {
           name = "example";
           version = "0.1.0";
@@ -57,14 +57,15 @@
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.default = packages.executable;
-
-        defaultPackage = packages.default;
+        packages.default = self.packages.${system}.executable;
+        defaultPackage = self.packages.${system}.default;
 
         apps.default = {
           type = "app";
-          program = "${defaultPackage}/bin/example";
+          program = "${self.packages.${system}.executable}/bin/example";
         };
+
+        checks = self.packages.${system};
 
         devShell = pkgs.devshell.mkShell {
           imports = [
