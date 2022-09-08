@@ -1,14 +1,19 @@
 {
+  # main
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    devshell.url = "github:numtide/devshell";
+  };
 
+  # dev
+  inputs = {
+    devshell.url = "github:numtide/devshell";
+    flake-utils.url = "github:numtide/flake-utils";
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
     };
   };
+
   outputs = {
     self,
     nixpkgs,
@@ -36,7 +41,7 @@
         packages.bundled = pkgs.deno2nix.mkBundled {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
@@ -44,7 +49,7 @@
         packages.wrapper = pkgs.deno2nix.mkBundledWrapper {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
@@ -52,7 +57,7 @@
         packages.executable = pkgs.deno2nix.mkExecutable {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
@@ -66,9 +71,18 @@
 
         checks = self.packages.${system};
 
-        devShell = pkgs.devshell.mkShell {
-          imports = [
-            (pkgs.devshell.importTOML ./devshell.toml)
+        devShells.default = pkgs.devshell.mkShell {
+          packages = with pkgs; [
+            alejandra
+            deno
+            treefmt
+            taplo-cli
+          ];
+          commands = [
+            {
+              package = "treefmt";
+              category = "formatters";
+            }
           ];
         };
       }
