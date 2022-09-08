@@ -18,7 +18,6 @@
     self,
     nixpkgs,
     flake-utils,
-    devshell,
     ...
   } @ inputs:
     {
@@ -30,15 +29,17 @@
     ]
     (
       system: let
+        inherit (pkgs) deno2nix;
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            devshell.overlay
+          overlays = with inputs; [
             self.overlays.default
+            devshell.overlay
           ];
         };
       in {
-        packages.bundled = pkgs.deno2nix.mkBundled {
+        packages.depslink = deno2nix.internal.mkDepsLink ./lock.json;
+        packages.bundled = deno2nix.mkBundled {
           name = "example";
           version = "0.1.0";
           src = ./.;
@@ -46,7 +47,7 @@
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.wrapper = pkgs.deno2nix.mkBundledWrapper {
+        packages.wrapper = deno2nix.mkBundledWrapper {
           name = "example";
           version = "0.1.0";
           src = ./.;
@@ -54,7 +55,7 @@
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.executable = pkgs.deno2nix.mkExecutable {
+        packages.executable = deno2nix.mkExecutable {
           name = "example";
           version = "0.1.0";
           src = ./.;
