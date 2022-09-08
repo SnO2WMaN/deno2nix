@@ -9,6 +9,7 @@
 in rec {
   urlPart = url: elemAt (flatten (split "://([a-z0-9\.]*)" url));
   artifactPath = url: "${urlPart url 0}/${urlPart url 1}/${hashString "sha256" (urlPart url 2)}";
+
   mkDepsLink = lockfile: (
     linkFarm "deps" (lib.flatten (
       mapAttrsToList

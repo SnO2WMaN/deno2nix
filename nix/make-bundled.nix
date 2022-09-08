@@ -1,6 +1,8 @@
 {
   pkgs,
-  lib ? pkgs.lib,
+  stdenv,
+  deno2nix,
+  lib,
   ...
 }: {
   name,
@@ -11,9 +13,9 @@
   importMap ? null,
   denoFlags ? [],
 }: let
-  inherit (pkgs.callPackage ./utils.nix {}) mkDepsLink;
+  inherit (deno2nix.internal) mkDepsLink;
 in
-  pkgs.stdenv.mkDerivation {
+  stdenv.mkDerivation {
     inherit name version entrypoint;
     denoFlags =
       denoFlags

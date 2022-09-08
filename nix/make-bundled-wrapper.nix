@@ -1,6 +1,12 @@
-{pkgs, ...}: {name, ...} @ args: let
-  bundled = (pkgs.callPackage ./make-bundled.nix {}) args;
+{
+  pkgs,
+  deno,
+  deno2nix,
+  writeShellScriptBin,
+  ...
+}: {name, ...} @ args: let
+  bundled = deno2nix.mkBundled args;
 in
-  pkgs.writeShellScriptBin
+  writeShellScriptBin
   "${name}"
-  "${pkgs.deno}/bin/deno run ${bundled}/dist/bundled.js"
+  "${deno}/bin/deno run ${bundled}/dist/bundled.js"

@@ -22,7 +22,7 @@
     ...
   } @ inputs:
     {
-      overlays.default = import ./overlay.nix;
+      overlays.default = import ./nix/overlay.nix;
       overlay = self.overlays.default;
     }
     // flake-utils.lib.eachSystem [
