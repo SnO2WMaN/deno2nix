@@ -64,7 +64,7 @@
 
           output = "example";
           entrypoint = "./mod.ts";
-          importMap = ./import_map.json;
+          importMap = "./import_map.json";
         };
         packages.default = self.packages.${system}.executable;
         defaultPackage = self.packages.${system}.default;

@@ -7,35 +7,36 @@
   pname,
   version,
   src,
+  lockfile,
   output ? pname,
   entrypoint,
-  lockfile,
   importMap ? null,
-  denoFlags ? [],
+  additionalDenoFlags ? "",
 }: let
   inherit (deno2nix.internal) mkDepsLink;
 in
   stdenv.mkDerivation {
-    inherit pname version src entrypoint;
-    denoFlags =
-      denoFlags
-      ++ ["--lock" lockfile]
-      ++ ["--cached-only"]
-      ++ ["--output" output]
-      ++ (
-        if importMap != null
-        then ["--import-map" importMap]
-        else []
-      );
-    buildInputs = with pkgs; [deno jq];
-    fixupPhase = ":";
+    inherit pname version src;
+    dontFixup = true;
 
+    buildInputs = with pkgs; [deno jq];
     buildPhase = ''
       export DENO_DIR=`mktemp -d`
       ln -s "${mkDepsLink lockfile}" $(deno info --json | jq -r .modulesCache)
 
-      deno compile $denoFlags "$src/${entrypoint}"
+      deno compile \
+        --cached-only \
+        --lock="${lockfile}" \
+        --output="${output}" \
+        ${
+        if importMap != null
+        then "--import-map=\"$src/${importMap}\""
+        else ""
+      } \
+        ${additionalDenoFlags} \
+        "$src/${entrypoint}"
     '';
+
     installPhase = ''
       mkdir -p $out/bin
       cp "${output}" "$out/bin/"
