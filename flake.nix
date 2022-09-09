@@ -56,12 +56,15 @@
           entrypoint = ./mod.ts;
         };
         packages.executable = deno2nix.mkExecutable {
-          name = "example";
-          version = "0.1.0";
+          pname = "example";
+          version = "0.1.2";
+
           src = ./.;
           lockfile = ./lock.json;
-          importMap = ./import_map.json;
+
+          output = "example";
           entrypoint = "./mod.ts";
+          importMap = ./import_map.json;
         };
         packages.default = self.packages.${system}.executable;
         defaultPackage = self.packages.${system}.default;

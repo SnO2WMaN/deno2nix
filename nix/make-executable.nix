@@ -4,9 +4,10 @@
   deno2nix,
   ...
 }: {
-  name,
+  pname,
   version,
   src,
+  output ? pname,
   entrypoint,
   lockfile,
   importMap ? null,
@@ -15,12 +16,12 @@
   inherit (deno2nix.internal) mkDepsLink;
 in
   stdenv.mkDerivation {
-    inherit src name entrypoint;
+    inherit pname version src entrypoint;
     denoFlags =
       denoFlags
       ++ ["--lock" lockfile]
       ++ ["--cached-only"]
-      ++ ["--output" name]
+      ++ ["--output" output]
       ++ (
         if importMap != null
         then ["--import-map" importMap]
@@ -37,6 +38,6 @@ in
     '';
     installPhase = ''
       mkdir -p $out/bin
-      mv "$name" "$out/bin/"
+      cp "${output}" "$out/bin/"
     '';
   }
