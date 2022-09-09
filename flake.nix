@@ -1,23 +1,27 @@
 {
+  # main
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    devshell.url = "github:numtide/devshell";
+  };
 
+  # dev
+  inputs = {
+    devshell.url = "github:numtide/devshell";
+    flake-utils.url = "github:numtide/flake-utils";
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
     };
   };
+
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    devshell,
     ...
   } @ inputs:
     {
-      overlays.default = import ./overlay.nix;
+      overlays.default = import ./nix/overlay.nix;
       overlay = self.overlays.default;
     }
     // flake-utils.lib.eachSystem [
@@ -25,34 +29,36 @@
     ]
     (
       system: let
+        inherit (pkgs) deno2nix;
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            devshell.overlay
+          overlays = with inputs; [
             self.overlays.default
+            devshell.overlay
           ];
         };
       in {
-        packages.bundled = pkgs.deno2nix.mkBundled {
+        packages.depslink = deno2nix.internal.mkDepsLink ./lock.json;
+        packages.bundled = deno2nix.mkBundled {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.wrapper = pkgs.deno2nix.mkBundledWrapper {
+        packages.wrapper = deno2nix.mkBundledWrapper {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
         };
-        packages.executable = pkgs.deno2nix.mkExecutable {
+        packages.executable = deno2nix.mkExecutable {
           name = "example";
           version = "0.1.0";
-          src = self;
+          src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
           entrypoint = ./mod.ts;
@@ -66,9 +72,18 @@
 
         checks = self.packages.${system};
 
-        devShell = pkgs.devshell.mkShell {
-          imports = [
-            (pkgs.devshell.importTOML ./devshell.toml)
+        devShells.default = pkgs.devshell.mkShell {
+          packages = with pkgs; [
+            alejandra
+            deno
+            treefmt
+            taplo-cli
+          ];
+          commands = [
+            {
+              package = "treefmt";
+              category = "formatters";
+            }
           ];
         };
       }

@@ -1,4 +1,9 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  stdenv,
+  deno2nix,
+  ...
+}: {
   name,
   version,
   src,
@@ -7,9 +12,9 @@
   importMap ? null,
   denoFlags ? [],
 }: let
-  inherit (pkgs.callPackage ./utils.nix {}) mkDepsLink;
+  inherit (deno2nix.internal) mkDepsLink;
 in
-  pkgs.stdenv.mkDerivation {
+  stdenv.mkDerivation {
     inherit src name entrypoint;
     denoFlags =
       denoFlags
@@ -21,10 +26,7 @@ in
         then ["--import-map" importMap]
         else []
       );
-    buildInputs = with pkgs; [
-      deno
-      jq
-    ];
+    buildInputs = with pkgs; [deno jq];
     fixupPhase = ":";
 
     buildPhase = ''
