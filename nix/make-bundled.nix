@@ -5,43 +5,38 @@
   lib,
   ...
 }: {
-  name,
+  pname,
   version,
   src,
-  entrypoint,
   lockfile,
+  output ? "bundled.js",
+  entrypoint,
   importMap ? null,
-  denoFlags ? [],
+  additionalDenoFlags ? "",
 }: let
   inherit (deno2nix.internal) mkDepsLink;
 in
   stdenv.mkDerivation {
-    inherit name version entrypoint;
-    denoFlags =
-      denoFlags
-      ++ (
-        if importMap != null
-        then ["--import-map" importMap]
-        else []
-      );
-
-    src = lib.cleanSourceWith {
-      inherit src;
-      filter = path: type: (baseNameOf path != "bundled.js");
-    };
-    buildInputs = with pkgs; [
-      deno
-      jq
-    ];
+    inherit pname version entrypoint src;
+    buildInputs = with pkgs; [deno jq];
 
     buildPhase = ''
       export DENO_DIR=`mktemp -d`
       ln -s "${mkDepsLink lockfile}" $(deno info --json | jq -r .modulesCache)
 
-      deno bundle $denoFlags $entrypoint bundled.js
+      deno bundle \
+        --lock="${lockfile}" \
+        ${
+        if importMap != null
+        then "--import-map=\"$src/${importMap}\""
+        else ""
+      } \
+        ${additionalDenoFlags} \
+        "$src/${entrypoint}" \
+        "${output}"
     '';
     installPhase = ''
       mkdir -p $out/dist
-      install -t $out/dist bundled.js
+      install -t $out/dist "${output}"
     '';
   }
