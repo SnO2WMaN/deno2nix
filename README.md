@@ -20,28 +20,33 @@ deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts
 {
   inputs.deno2nix.url = "github:SnO2WMaN/deno2nix";
   inputs.devshell.url = "github:numtide/devshell";
-
+ 
   outputs = {
-    deno2nix,
+    self,
+    nixpkgs,
     flake-utils,
     ...
-  }:
+  } @ inputs:
     flake-utils.lib.eachDefaultSystem (system: let
+      inherit (pkgs) deno2nix;
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [
+        overlays = with inputs; [
           devshell.overlay
           deno2nix.overlay
         ];
       };
     in {
-      packages.executable = pkgs.deno2nix.mkExecutable {
-        name = "example";
-        version = "0.1.0";
-        src = self;
+      packages.executable = deno2nix.mkExecutable {
+        pname = "example-executable";
+        version = "0.1.2";
+
+        src = ./.;
         lockfile = ./lock.json;
-        importmap = ./import_map.json;
-        entrypoint = ./mod.ts;
+
+        output = "example";
+        entrypoint = "./mod.ts";
+        importMap = "./import_map.json";
       };
     });
 }
@@ -52,19 +57,17 @@ deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts
 #### Args
 
 ```nix
- {
-    name,
-    version,
-    src,
-    entrypoint,
-    lockfile,
-    importmap ? null,
-    denoFlags ? [],
+{
+  pname,
+  version,
+  src,
+  lockfile,
+  output ? pname, # generate binary name
+  entrypoint,
+  importMap ? null, # ex. "./import_map.json" to $src/${importMap}
+  additionalDenoFlags ? "", # ex. "--allow-net"
 }
 ```
-
-- `importMap = ./import_map.json`
-- `denoFlags = ["--allow-net" true]`
 
 ## Thanks
 

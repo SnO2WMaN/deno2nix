@@ -40,35 +40,44 @@
       in {
         packages.depslink = deno2nix.internal.mkDepsLink ./lock.json;
         packages.bundled = deno2nix.mkBundled {
-          name = "example";
+          pname = "example-bundled";
           version = "0.1.0";
+
           src = ./.;
           lockfile = ./lock.json;
-          importMap = ./import_map.json;
-          entrypoint = ./mod.ts;
+
+          output = "bundled.js";
+          entrypoint = "./mod.ts";
+          importMap = "./import_map.json";
         };
-        packages.wrapper = deno2nix.mkBundledWrapper {
-          name = "example";
+        packages.bundled-wrapper = deno2nix.mkBundledWrapper {
+          pname = "example-bundled-wrapper";
           version = "0.1.0";
+
           src = ./.;
           lockfile = ./lock.json;
-          importMap = ./import_map.json;
-          entrypoint = ./mod.ts;
+
+          output = "bundled.js";
+          entrypoint = "./mod.ts";
+          importMap = "./import_map.json";
         };
         packages.executable = deno2nix.mkExecutable {
-          name = "example";
-          version = "0.1.0";
+          pname = "example-executable";
+          version = "0.1.2";
+
           src = ./.;
           lockfile = ./lock.json;
-          importMap = ./import_map.json;
-          entrypoint = ./mod.ts;
+
+          output = "example";
+          entrypoint = "./mod.ts";
+          importMap = "./import_map.json";
         };
         packages.default = self.packages.${system}.executable;
         defaultPackage = self.packages.${system}.default;
 
-        apps.default = flake-utils.lib.mkApp {
-          drv = self.packages.${system}.executable;
-        };
+        apps.bundled-wrapper = flake-utils.lib.mkApp {drv = self.packages.${system}.bundled-wrapper;};
+        apps.executable = flake-utils.lib.mkApp {drv = self.packages.${system}.executable;};
+        apps.default = self.apps.${system}.executable;
 
         checks = self.packages.${system};
 

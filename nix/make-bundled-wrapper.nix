@@ -4,9 +4,14 @@
   deno2nix,
   writeShellScriptBin,
   ...
-}: {name, ...} @ args: let
+}: {
+  pname,
+  bin ? pname,
+  output ? "bundled.js",
+  ...
+} @ args: let
   bundled = deno2nix.mkBundled args;
 in
   writeShellScriptBin
-  "${name}"
-  "${deno}/bin/deno run ${bundled}/dist/bundled.js"
+  bin
+  "${deno}/bin/deno run ${bundled}/dist/${output}"
