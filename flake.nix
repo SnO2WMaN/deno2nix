@@ -61,7 +61,7 @@
           src = ./.;
           lockfile = ./lock.json;
           importMap = ./import_map.json;
-          entrypoint = ./mod.ts;
+          entrypoint = "./mod.ts";
         };
         packages.default = self.packages.${system}.executable;
         defaultPackage = self.packages.${system}.default;

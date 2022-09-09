@@ -33,7 +33,7 @@ in
       export DENO_DIR=`mktemp -d`
       ln -s "${mkDepsLink lockfile}" $(deno info --json | jq -r .modulesCache)
 
-      deno compile $denoFlags "$entrypoint"
+      deno compile $denoFlags "$src/${entrypoint}"
     '';
     installPhase = ''
       mkdir -p $out/bin
