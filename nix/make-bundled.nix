@@ -10,6 +10,7 @@
   src,
   lockfile,
   output ? "bundled.js",
+  outPath ? "dist",
   entrypoint,
   importMap ? null,
   additionalDenoFlags ? "",
@@ -37,7 +38,7 @@ in
         "${output}"
     '';
     installPhase = ''
-      mkdir -p $out/dist
-      install -t $out/dist "${output}"
+      mkdir -p $out/${outPath}
+      install -t $out/${outPath} "${output}"
     '';
   }
