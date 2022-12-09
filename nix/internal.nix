@@ -43,7 +43,7 @@ in {
           }
         ]
       )
-      (importJSON lockfile)
+      (importJSON lockfile).remote
     ))
   );
 }
