@@ -20,7 +20,7 @@
 in
   stdenv.mkDerivation {
     inherit pname version entrypoint src;
-    buildInputs = with pkgs; [ deno jq nodePackages.uglify-js ];
+    buildInputs = with pkgs; [deno jq nodePackages.uglify-js];
 
     buildPhase = ''
       export DENO_DIR="/tmp/deno2nix"
