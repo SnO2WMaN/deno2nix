@@ -11,6 +11,7 @@
   lockfile,
   output ? "bundled.js",
   outPath ? "dist",
+  minify ? false,
   entrypoint,
   importMap ? null,
   additionalDenoFlags ? "",
@@ -19,7 +20,7 @@
 in
   stdenv.mkDerivation {
     inherit pname version entrypoint src;
-    buildInputs = with pkgs; [deno jq];
+    buildInputs = with pkgs; [ deno jq nodePackages.uglify-js ];
 
     buildPhase = ''
       export DENO_DIR="/tmp/deno2nix"
@@ -28,7 +29,7 @@ in
 
       deno bundle \
         --lock="${lockfile}" \
-        ${
+      ${
         if importMap != null
         then "--import-map=\"$src/${importMap}\""
         else ""
@@ -36,6 +37,15 @@ in
         ${additionalDenoFlags} \
         "$src/${entrypoint}" \
         "${output}"
+
+      ${
+        if minify
+        then ''
+          mv ${output} ${output}-non-min
+          uglifyjs ${output}-non-min -c -m > ${output}
+        ''
+        else ""
+      }
     '';
     installPhase = ''
       mkdir -p $out/${outPath}

@@ -56,6 +56,7 @@
           output = "bundled.js";
           entrypoint = "./mod.ts";
           importMap = "./import_map.json";
+          minify = true;
         };
         packages.bundled-wrapper = deno2nix.mkBundledWrapper {
           pname = "example-bundled-wrapper";
