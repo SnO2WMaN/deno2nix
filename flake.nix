@@ -6,7 +6,11 @@
 
   # dev
   inputs = {
-    devshell.url = "github:numtide/devshell";
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
     flake-utils.url = "github:numtide/flake-utils";
     flake-compat = {
       url = "github:edolstra/flake-compat";
@@ -26,6 +30,9 @@
     }
     // flake-utils.lib.eachSystem [
       "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
     ]
     (
       system: let
@@ -49,6 +56,7 @@
           output = "bundled.js";
           entrypoint = "./mod.ts";
           importMap = "./import_map.json";
+          minify = true;
         };
         packages.bundled-wrapper = deno2nix.mkBundledWrapper {
           pname = "example-bundled-wrapper";
