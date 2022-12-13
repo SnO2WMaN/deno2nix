@@ -4,4 +4,4 @@ result
 dist
 
 # VSCode
-.vscode/settings.json
+**/.vscode/settings.json
