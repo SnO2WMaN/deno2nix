@@ -65,53 +65,13 @@
             drv = self.packages.${system}."simple/executable";
             name = "simple";
           };
+          "simple/bundled-wrapper" = flake-utils.lib.mkApp {
+            drv = self.packages.${system}."simple/bundled-wrapper";
+            name = "simple";
+          };
         };
-
-        /*
-        packages.bundled = deno2nix.mkBundled {
-          pname = "example-bundled";
-          version = "0.1.0";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "bundled.js";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
-          minify = true;
-        };
-        packages.bundled-wrapper = deno2nix.mkBundledWrapper {
-          pname = "example-bundled-wrapper";
-          version = "0.1.0";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "bundled.js";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
-        };
-        packages.executable = deno2nix.mkExecutable {
-          pname = "example-executable";
-          version = "0.1.2";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "example";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
-        };
-        packages.default = self.packages.${system}.executable;
-        defaultPackage = self.packages.${system}.default;
-
-        apps.bundled-wrapper = flake-utils.lib.mkApp {drv = self.packages.${system}.bundled-wrapper;};
-        apps.executable = flake-utils.lib.mkApp {drv = self.packages.${system}.executable;};
-        apps.default = self.apps.${system}.executable;
 
         checks = self.packages.${system};
-        */
-
         devShells.default = pkgs.devshell.mkShell {
           packages = with pkgs; [
             alejandra

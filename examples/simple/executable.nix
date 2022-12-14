@@ -4,7 +4,7 @@ deno2nix.mkExecutable {
   version = "0.1.0";
 
   src = ./.;
-  output = "simple";
+  bin = "simple";
 
   entrypoint = "./mod.ts";
   lockfile = "./deno.lock";

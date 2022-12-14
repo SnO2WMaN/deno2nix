@@ -8,7 +8,7 @@
   pname,
   version,
   src,
-  output ? pname,
+  bin ? pname,
   entrypoint,
   lockfile,
   config,
@@ -33,7 +33,7 @@
     [
       "deno compile --cached-only"
       "--lock=${lockfile}"
-      "--output=${output}"
+      "--output=${bin}"
       # "--config=${config}"
     ]
     ++ (
@@ -67,6 +67,6 @@ in
     '';
     installPhase = ''
       mkdir -p $out/bin
-      cp "${output}" "$out/bin/"
+      cp "${bin}" "$out/bin/"
     '';
   }
