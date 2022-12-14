@@ -57,6 +57,7 @@
         packages = {
           "simple/deps-link" = pkgs.callPackage ./examples/simple/deps-link.nix {};
           "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
+          "simple/bundled-wrapper" = pkgs.callPackage ./examples/simple/bundled-wrapper.nix {};
           "simple/executable" = pkgs.callPackage ./examples/simple/executable.nix {};
         };
         apps = {
