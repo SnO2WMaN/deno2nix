@@ -54,13 +54,16 @@
            };
         };
         */
-        packages = flake-utils.lib.flattenTree {
+        packages = {
           "simple/deps-link" = pkgs.callPackage ./examples/simple/deps-link.nix {};
-          # "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
+          "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
           "simple/executable" = pkgs.callPackage ./examples/simple/executable.nix {};
         };
-        apps = flake-utils.lib.flattenTree {
-          "simple/executable" = flake-utils.lib.mkApp {drv = self.packages.${system}.executable;};
+        apps = {
+          "simple/executable" = flake-utils.lib.mkApp {
+            drv = self.packages.${system}."simple/executable";
+            name = "simple";
+          };
         };
 
         /*
