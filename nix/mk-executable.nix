@@ -14,15 +14,20 @@
   config,
   allow ? {},
   additionalDenoFlags ? "",
-}: let
-  inherit (lib.strings) concatStringsSep;
-  inherit (deno2nix.internal) mkDepsLink;
+} @ inputs: let
+  inherit (builtins) isString;
+  inherit (lib) importJSON concatStringsSep;
+  inherit (deno2nix.internal) mkDepsLink findImportMap;
 
   allowflag = flag: (
     if (allow ? flag) && allow."${flag}"
     then ["--allow-${flag}"]
     else []
   );
+
+  importMap = findImportMap {
+    inherit (inputs) src config importMap;
+  };
 
   compileCmd = concatStringsSep " " (
     [
@@ -31,6 +36,11 @@
       "--output=${output}"
       # "--config=${config}"
     ]
+    ++ (
+      if (isString importMap)
+      then ["--import-map=${importMap}"]
+      else []
+    )
     ++ (allowflag "all")
     ++ (allowflag "env")
     ++ (allowflag "ffi")

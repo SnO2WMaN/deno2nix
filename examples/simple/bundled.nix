@@ -8,5 +8,4 @@ deno2nix.mkBundled {
 
   entrypoint = "./mod.ts";
   lockfile = "./deno.lock";
-  config = "./deno.jsonc";
 }

@@ -9,13 +9,13 @@
   version,
   src,
   output ? "${pname}.bundled.js",
-  lockfile,
-  config,
   outPath ? "dist",
-  minify ? false,
   entrypoint,
+  lockfile,
+  minify ? false,
   additionalDenoFlags ? "",
 }: let
+  inherit (builtins) isString;
   inherit (lib.strings) concatStringsSep;
   inherit (deno2nix.internal) mkDepsLink;
 
