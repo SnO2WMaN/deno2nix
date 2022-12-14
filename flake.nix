@@ -26,7 +26,6 @@
   } @ inputs:
     {
       overlays.default = import ./nix/overlay.nix;
-      overlay = self.overlays.default;
     }
     // flake-utils.lib.eachSystem [
       "x86_64-linux"
@@ -45,62 +44,39 @@
           ];
         };
       in {
-        packages.depslink = deno2nix.internal.mkDepsLink ./lock.json;
-        packages.bundled = deno2nix.mkBundled {
-          pname = "example-bundled";
-          version = "0.1.0";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "bundled.js";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
-          minify = true;
+        /*
+        TODO: It can't but I don't why
+        packages = flake-utils.lib.flattenTree {
+           simple = {
+             deps-link = pkgs.callPackage ./examples/simple/deps-link.nix {};
+             executable = pkgs.callPackage ./examples/simple/executable.nix {};
+           };
         };
-        packages.bundled-wrapper = deno2nix.mkBundledWrapper {
-          pname = "example-bundled-wrapper";
-          version = "0.1.0";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "bundled.js";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
+        */
+        packages = {
+          "simple/deps-link" = pkgs.callPackage ./examples/simple/deps-link.nix {};
+          "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
+          "simple/bundled-wrapper" = pkgs.callPackage ./examples/simple/bundled-wrapper.nix {};
+          "simple/executable" = pkgs.callPackage ./examples/simple/executable.nix {};
         };
-        packages.executable = deno2nix.mkExecutable {
-          pname = "example-executable";
-          version = "0.1.2";
-
-          src = ./.;
-          lockfile = ./lock.json;
-
-          output = "example";
-          entrypoint = "./mod.ts";
-          importMap = "./import_map.json";
+        apps = {
+          "simple/executable" = flake-utils.lib.mkApp {
+            drv = self.packages.${system}."simple/executable";
+            name = "simple";
+          };
+          "simple/bundled-wrapper" = flake-utils.lib.mkApp {
+            drv = self.packages.${system}."simple/bundled-wrapper";
+            name = "simple";
+          };
         };
-        packages.default = self.packages.${system}.executable;
-        defaultPackage = self.packages.${system}.default;
-
-        apps.bundled-wrapper = flake-utils.lib.mkApp {drv = self.packages.${system}.bundled-wrapper;};
-        apps.executable = flake-utils.lib.mkApp {drv = self.packages.${system}.executable;};
-        apps.default = self.apps.${system}.executable;
 
         checks = self.packages.${system};
-
         devShells.default = pkgs.devshell.mkShell {
           packages = with pkgs; [
             alejandra
             deno
             treefmt
             taplo-cli
-          ];
-          commands = [
-            {
-              package = "treefmt";
-              category = "formatters";
-            }
           ];
         };
       }

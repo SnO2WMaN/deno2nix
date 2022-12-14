@@ -1,8 +1,8 @@
 {
+  "importMap": "./import_map.json",
   "tasks": {
-    "run": "deno run --import-map=./import_map.json ./mod.ts",
-    "compile": "deno compile --import-map=./import_map.json ./mod.ts",
-    "cache": "deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts"
+    "run": "deno run -A ./mod.ts",
+    "compile": "deno compile -A ./mod.ts"
   },
   "fmt": {
     "options": {

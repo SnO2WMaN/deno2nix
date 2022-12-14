@@ -1,22 +1,36 @@
 {
   pkgs,
+  lib,
   stdenv,
   deno2nix,
-  lib,
   ...
 }: {
   pname,
   version,
   src,
-  lockfile,
-  output ? "bundled.js",
+  output ? "${pname}.bundled.js",
   outPath ? "dist",
-  minify ? false,
   entrypoint,
-  importMap ? null,
+  lockfile,
+  minify ? false,
   additionalDenoFlags ? "",
 }: let
+  inherit (builtins) isString;
+  inherit (lib.strings) concatStringsSep;
   inherit (deno2nix.internal) mkDepsLink;
+
+  bundleCmd = concatStringsSep " " (
+    [
+      "deno bundle"
+      "--lock=${lockfile}"
+      # "--config=${config}"
+    ]
+    ++ [additionalDenoFlags]
+    ++ [
+      "${entrypoint}"
+      "${output}"
+    ]
+  );
 in
   stdenv.mkDerivation {
     inherit pname version entrypoint src;
@@ -25,19 +39,8 @@ in
     buildPhase = ''
       export DENO_DIR="/tmp/deno2nix"
       mkdir -p $DENO_DIR
-      ln -s "${mkDepsLink lockfile}" $(deno info --json | jq -r .modulesCache)
-
-      deno bundle \
-        --lock="${lockfile}" \
-      ${
-        if importMap != null
-        then "--import-map=\"$src/${importMap}\""
-        else ""
-      } \
-        ${additionalDenoFlags} \
-        "$src/${entrypoint}" \
-        "${output}"
-
+      ln -s "${mkDepsLink (src + "/${lockfile}")}" $(deno info --json | jq -r .modulesCache)
+      ${bundleCmd}
       ${
         if minify
         then ''
