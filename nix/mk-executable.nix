@@ -12,18 +12,35 @@
   entrypoint,
   lockfile,
   config,
-  allow,
+  allow ? {},
+  additionalDenoFlag ? "",
 }: let
   inherit (lib.strings) concatStringsSep;
   inherit (deno2nix.internal) mkDepsLink;
+
+  allowflag = flag: (
+    if (allow ? flag) && allow."${flag}"
+    then ["--allow-${flag}"]
+    else []
+  );
 
   compileCmd = concatStringsSep " " (
     [
       "deno compile --cached-only"
       "--lock=${lockfile}"
       "--output=${output}"
+      "--config=${config}"
     ]
-    ++ []
+    ++ (allowflag "all")
+    ++ (allowflag "env")
+    ++ (allowflag "ffi")
+    ++ (allowflag "hrtime")
+    ++ (allowflag "net")
+    ++ (allowflag "read")
+    ++ (allowflag "run")
+    ++ (allowflag "sys")
+    ++ (allowflag "write")
+    ++ [additionalDenoFlag]
     ++ ["${entrypoint}"]
   );
 in
