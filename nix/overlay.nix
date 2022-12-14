@@ -4,6 +4,6 @@ final: prev: {
     mkBundledWrapper = final.callPackage ./make-bundled-wrapper.nix {};
     mkExecutable = final.callPackage ./make-executable.nix {};
 
-    internal = final.callPackage ./internal.nix {};
+    internal = final.callPackage ./internal {};
   };
 }

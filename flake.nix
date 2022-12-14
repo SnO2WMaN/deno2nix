@@ -45,7 +45,22 @@
           ];
         };
       in {
-        packages.depslink = deno2nix.internal.mkDepsLink ./lock.json;
+        /*
+        TODO: It can't but I don't why
+        packages = flake-utils.lib.flattenTree {
+           simple = {
+             deps-link = pkgs.callPackage ./examples/simple/deps-link.nix {};
+             executable = pkgs.callPackage ./examples/simple/executable.nix {};
+           };
+        };
+        */
+        packages = {
+          "simple/deps-link" = pkgs.callPackage ./examples/simple/deps-link.nix {};
+          "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
+          "simple/executable" = pkgs.callPackage ./examples/simple/executable.nix {};
+        };
+
+        /*
         packages.bundled = deno2nix.mkBundled {
           pname = "example-bundled";
           version = "0.1.0";
@@ -88,6 +103,7 @@
         apps.default = self.apps.${system}.executable;
 
         checks = self.packages.${system};
+        */
 
         devShells.default = pkgs.devshell.mkShell {
           packages = with pkgs; [
