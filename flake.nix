@@ -26,7 +26,6 @@
   } @ inputs:
     {
       overlays.default = import ./nix/overlay.nix;
-      overlay = self.overlays.default;
     }
     // flake-utils.lib.eachSystem [
       "x86_64-linux"
