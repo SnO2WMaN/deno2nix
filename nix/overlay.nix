@@ -1,6 +1,6 @@
 final: prev: {
   deno2nix = {
-    mkBundled = final.callPackage ./make-bundled.nix {};
+    mkBundled = final.callPackage ./mk-bundled.nix {};
     mkBundledWrapper = final.callPackage ./make-bundled-wrapper.nix {};
     mkExecutable = final.callPackage ./mk-executable.nix {};
 

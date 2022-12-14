@@ -13,7 +13,7 @@
   lockfile,
   config,
   allow ? {},
-  additionalDenoFlag ? "",
+  additionalDenoFlags ? "",
 }: let
   inherit (lib.strings) concatStringsSep;
   inherit (deno2nix.internal) mkDepsLink;
@@ -29,7 +29,7 @@
       "deno compile --cached-only"
       "--lock=${lockfile}"
       "--output=${output}"
-      "--config=${config}"
+      # "--config=${config}"
     ]
     ++ (allowflag "all")
     ++ (allowflag "env")
@@ -40,7 +40,7 @@
     ++ (allowflag "run")
     ++ (allowflag "sys")
     ++ (allowflag "write")
-    ++ [additionalDenoFlag]
+    ++ [additionalDenoFlags]
     ++ ["${entrypoint}"]
   );
 in
