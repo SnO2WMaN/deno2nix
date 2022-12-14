@@ -4,17 +4,7 @@
 
 ## Usage
 
-- lockfile -> `./lock.json`
-- import map -> `./import_map.json`
-- entrypoint -> `./mod.ts`
-
-### Update `lock.json` for caching
-
-```bash
-deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts
-```
-
-### Setup for nix flake (example)
+There is a [sample project](/examples/simple).
 
 ```nix
 {
@@ -33,39 +23,25 @@ deno cache --import-map=./import_map.json --lock lock.json --lock-write ./mod.ts
         inherit system;
         overlays = with inputs; [
           devshell.overlay
-          deno2nix.overlay
+          deno2nix.overlays.default
         ];
       };
     in {
       packages.executable = deno2nix.mkExecutable {
-        pname = "example-executable";
-        version = "0.1.2";
-
+        pname = "simple-executable";
+        version = "0.1.0";
+      
         src = ./.;
-        lockfile = ./lock.json;
-
-        output = "example";
+        bin = "simple";
+      
         entrypoint = "./mod.ts";
-        importMap = "./import_map.json";
-      };
-    });
-}
-```
-
-### `deno2nix.mkExecutable`
-
-#### Args
-
-```nix
-{
-  pname,
-  version,
-  src,
-  lockfile,
-  output ? pname, # generate binary name
-  entrypoint,
-  importMap ? null, # ex. "./import_map.json" to $src/${importMap}
-  additionalDenoFlags ? "", # ex. "--allow-net"
+        lockfile = "./deno.lock";
+        config = "./deno.jsonc";
+      
+        allow = {
+          all = true;
+        };
+      });
 }
 ```
 
