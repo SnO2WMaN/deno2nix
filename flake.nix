@@ -54,10 +54,13 @@
            };
         };
         */
-        packages = {
+        packages = flake-utils.lib.flattenTree {
           "simple/deps-link" = pkgs.callPackage ./examples/simple/deps-link.nix {};
-          "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
+          # "simple/bundled" = pkgs.callPackage ./examples/simple/bundled.nix {};
           "simple/executable" = pkgs.callPackage ./examples/simple/executable.nix {};
+        };
+        apps = flake-utils.lib.flattenTree {
+          "simple/executable" = flake-utils.lib.mkApp {drv = self.packages.${system}.executable;};
         };
 
         /*
@@ -111,12 +114,6 @@
             deno
             treefmt
             taplo-cli
-          ];
-          commands = [
-            {
-              package = "treefmt";
-              category = "formatters";
-            }
           ];
         };
       }
