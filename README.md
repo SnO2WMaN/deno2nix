@@ -8,40 +8,37 @@ There is a [sample project](/examples/simple).
 
 ```nix
 {
+  inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.deno2nix.url = "github:SnO2WMaN/deno2nix";
-  inputs.devshell.url = "github:numtide/devshell";
- 
+
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    ...
-  } @ inputs:
+    deno2nix,
+  }:
     flake-utils.lib.eachDefaultSystem (system: let
-      inherit (pkgs) deno2nix;
       pkgs = import nixpkgs {
         inherit system;
-        overlays = with inputs; [
-          devshell.overlay
-          deno2nix.overlays.default
-        ];
+        overlays = [deno2nix.overlays.default];
       };
     in {
-      packages.executable = deno2nix.mkExecutable {
+      packages.executable = pkgs.deno2nix.mkExecutable {
         pname = "simple-executable";
         version = "0.1.0";
-      
+
         src = ./.;
         bin = "simple";
-      
+
         entrypoint = "./mod.ts";
         lockfile = "./deno.lock";
         config = "./deno.jsonc";
-      
+
         allow = {
           all = true;
         };
-      });
+      };
+    });
 }
 ```
 
