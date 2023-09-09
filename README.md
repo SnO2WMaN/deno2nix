@@ -42,6 +42,7 @@ There is a [sample project](/examples/simple).
           all = true;
         };
       });
+    };
 }
 ```
 
