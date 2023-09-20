@@ -14,6 +14,7 @@
   config,
   allow ? {},
   additionalDenoFlags ? "",
+  preBuild ? "",
 } @ inputs: let
   inherit (builtins) isString;
   inherit (lib) importJSON concatStringsSep;
@@ -60,6 +61,7 @@ in
 
     buildInputs = with pkgs; [deno jq];
     buildPhase = ''
+      runHook preBuild
       export DENO_DIR="/tmp/deno2nix"
       mkdir -p $DENO_DIR
       ln -s "${mkDepsLink (src + "/${lockfile}")}" $(deno info --json | jq -r .modulesCache)
